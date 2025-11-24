@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue.svg) ![Status](https://img.shields.io/badge/Status-Finalizado-green.svg) ![UTN](https://img.shields.io/badge/UTN-FRBA-red.svg)
 
-Este repositorio contiene el código fuente de la simulación desarrollada para el **Trabajo Práctico Integrador (TPI)** de la asignatura **Teoría de Control**.
+Este repositorio contiene el código fuente de la simulación desarrollada para el **Trabajo Práctico Integrador Final (TFI)** de la asignatura **Teoría de Control**.
 
 El proyecto modela y simula un sistema de control de lazo cerrado (PID) aplicado a la gestión de QoS (*Quality of Service*) en un router SOHO, demostrando la capacidad de regulación de *throughput* y rechazo a perturbaciones de tráfico.
 
