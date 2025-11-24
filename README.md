@@ -66,6 +66,7 @@ Mueva el slider superior derecho para simular una carga repentina de tráfico (e
 
 ### 3. Observar la Corrección: 
 Verá cómo la velocidad real cae momentáneamente debido a la perturbación, pero el controlador PID acciona (curva roja) y logra recuperar la velocidad al valor deseado automáticamente y el Error volverá a cero. 
+
 Nota: se recomienda hacer zoom en los graficos de la entrada y el error usando la ruedita del mouse para ver la variación con mayor claridad.
 
 ## 👥 Autores e Información Académica
