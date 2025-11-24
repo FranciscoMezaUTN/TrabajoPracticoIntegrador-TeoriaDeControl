@@ -77,7 +77,7 @@ Nota: se recomienda hacer zoom en los graficos de la entrada y el error usando l
 
 · Docente: Prof. Mgtr. Omar Civale
 
-· Ciclo Lectivo: 2025
+· Ciclo Lectivo: 2do. Cuatrimestre de 2025
 
 ### Integrantes del Grupo:
 
