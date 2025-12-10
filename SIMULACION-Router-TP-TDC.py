@@ -33,6 +33,7 @@ class SimuladorRouter(QtWidgets.QMainWindow):
         self.perturbacion_val = 0.0
         self.integral_sum = 0.0
         self.salida_real_actual = 0.0
+        self.prev_error = 0.0  # Necesario para calcular la acción Derivativa (D)
 
         # Arrays de datos
         self.data_ref = np.zeros(HISTORY_LEN)
@@ -82,11 +83,29 @@ class SimuladorRouter(QtWidgets.QMainWindow):
         gb_dist.setLayout(vb_dist)
 
         # Grupo PID Values
-        gb_pid = QtWidgets.QGroupBox("Controlador PID")
+        gb_pid = QtWidgets.QGroupBox("Sintonización PID (En vivo)")
         form = QtWidgets.QFormLayout()
-        form.addRow("Kp:", QtWidgets.QLabel(str(KP)))
-        form.addRow("Ki:", QtWidgets.QLabel(str(KI)))
-        form.addRow("Kd:", QtWidgets.QLabel(str(KD)))
+
+        # SpinBox para Kp
+        self.spin_kp = QtWidgets.QDoubleSpinBox()
+        self.spin_kp.setRange(0.0, 500.0)
+        self.spin_kp.setValue(KP)
+        
+        # SpinBox para Ki (Rango alto para permitir 2400)
+        self.spin_ki = QtWidgets.QDoubleSpinBox()
+        self.spin_ki.setRange(0.0, 5000.0)
+        self.spin_ki.setValue(KI)
+
+        # SpinBox para Kd (Decimales para precisión en 0.06)
+        self.spin_kd = QtWidgets.QDoubleSpinBox()
+        self.spin_kd.setRange(0.0, 10.0)
+        self.spin_kd.setSingleStep(0.01)
+        self.spin_kd.setDecimals(3)
+        self.spin_kd.setValue(KD)
+
+        form.addRow("Kp:", self.spin_kp)
+        form.addRow("Ki:", self.spin_ki)
+        form.addRow("Kd:", self.spin_kd)
         gb_pid.setLayout(form)
 
         ctrl_layout.addWidget(gb_ref)
@@ -145,16 +164,31 @@ class SimuladorRouter(QtWidgets.QMainWindow):
 
     def update_simulation(self):
         # --- 1. PID ---
+        # Leer ganancias actuales de la interfaz gráfica
+        curr_kp = self.spin_kp.value()
+        curr_ki = self.spin_ki.value()
+        curr_kd = self.spin_kd.value()
+
         feedback = self.salida_real_actual
         error = self.referencia_setpoint - feedback
 
-        P = KP * error
+        # Acción Proporcional
+        P = curr_kp * error
 
+        # Acción Integral
         self.integral_sum += error * DT
+        # Anti-windup simple (puedes ajustarlo si Ki es muy alto)
         self.integral_sum = np.clip(self.integral_sum, -100, 100)
-        I = KI * self.integral_sum
+        I = curr_ki * self.integral_sum
 
-        pid_out = P + I
+        # Acción Derivativa (Ahora sí funcional)
+        derivative = (error - self.prev_error) / DT
+        D = curr_kd * derivative
+        
+        # Guardar error para la siguiente iteración
+        self.prev_error = error
+
+        pid_out = P + I + D
 
         # --- 2. Saturación (Actuador) ---
         actuator_out = np.clip(pid_out, MIN_MBPS, MAX_MBPS)
